@@ -1,0 +1,119 @@
+I'll provide a complete project structure for an OpenRouter.ai documentation site with all necessary files. Here's the technical approach:
+
+1. Static documentation site using Next.js for optimal performance
+2. Markdown content management
+3. Responsive design with Tailwind CSS
+4. API reference section with interactive examples
+5. Search functionality
+
+Here are the required files:
+
+### Core Files:
+- `next.config.js`: Next.js configuration
+- `tailwind.config.js`: Tailwind CSS configuration
+- `postcss.config.js`: PostCSS configuration
+- `package.json`: Project dependencies
+- `tsconfig.json`: TypeScript configuration
+
+### Main Application Files:
+- `app/layout.tsx`: Root layout component
+- `app/page.tsx`: Home page
+- `app/docs/[...slug]/page.tsx`: Dynamic docs pages
+- `app/api-reference/page.tsx`: API reference page
+
+### Component Files:
+- `components/Navbar.tsx`: Navigation bar
+- `components/Sidebar.tsx`: Docs sidebar
+- `components/Search.tsx`: Search component
+- `components/CodeBlock.tsx`: Syntax highlighted code blocks
+- `components/APITester.tsx`: Interactive API tester
+
+### Utility Files:
+- `lib/markdown.ts`: Markdown processing utilities
+- `lib/search.ts`: Search functionality
+- `lib/api.ts`: API client
+- `types/index.ts`: Type definitions
+
+### Style Files:
+- `styles/globals.css`: Global styles
+- `styles/markdown.css`: Markdown content styles
+
+### Content Files:
+- `content/docs/introduction.md`: Introduction docs
+- `content/docs/getting-started.md`: Getting started guide
+- `content/docs/api-basics.md`: API basics
+- `content/api-reference/authentication.md`: Auth reference
+
+Here's the complete code for the main layout file (`app/layout.tsx`):
+
+```tsx
+import './globals.css'
+import { Inter } from 'next/font/google'
+import Navbar from '@/components/Navbar'
+import Sidebar from '@/components/Sidebar'
+
+const inter = Inter({ subsets: ['latin'] })
+
+export const metadata = {
+  title: 'OpenRouter.ai Documentation',
+  description: 'Official documentation for OpenRouter.ai API',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en">
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
+        <Navbar />
+        <div className="flex flex-1">
+          <Sidebar />
+          <main className="flex-1 p-8 overflow-auto">
+            <div className="max-w-4xl mx-auto">
+              {children}
+            </div>
+          </main>
+        </div>
+      </body>
+    </html>
+  )
+}
+```
+
+And here's the dynamic docs page (`app/docs/[...slug]/page.tsx`):
+
+```tsx
+import { readFile } from 'fs/promises'
+import path from 'path'
+import { compileMDX } from '@/lib/markdown'
+import { notFound } from 'next/navigation'
+
+interface Props {
+  params: {
+    slug: string[]
+  }
+}
+
+export default async function DocsPage({ params }: Props) {
+  const slug = params.slug?.join('/') || 'introduction'
+  const filePath = path.join(process.cwd(), 'content', 'docs', `${slug}.md`)
+  
+  try {
+    const source = await readFile(filePath, 'utf8')
+    const { content, frontmatter } = await compileMDX(source)
+
+    return (
+      <article className="prose dark:prose-invert max-w-none">
+        <h1>{frontmatter.title}</h1>
+        {content}
+      </article>
+    )
+  } catch (err) {
+    return notFound()
+  }
+}
+```
+
+Would you like me to provide the complete code for any other specific file from the project structure?
