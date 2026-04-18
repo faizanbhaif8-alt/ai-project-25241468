@@ -1,0 +1,63 @@
+// app.js: Main JavaScript file for AI Video Generator
+
+// Import necessary modules
+const express = require('express');
+const bodyParser = require('body-parser');
+const multer = require('multer');
+const ffmpeg = require('fluent-ffmpeg');
+const fs = require('fs');
+const path = require('path');
+
+// Initialize Express app
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Middleware to parse JSON and form data
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+const upload = multer({ storage });
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Route to handle video upload and processing
+app.post('/generate-video', upload.single('video'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No video file uploaded' });
+  }
+
+  const inputFilePath = req.file.path;
+  const outputFilePath = path.join(__dirname, 'public', 'output', `output-${Date.now()}.mp4`);
+
+  ffmpeg(inputFilePath)
+    .output(outputFilePath)
+    .on('end', () => {
+      res.json({ success: true, outputFilePath });
+    })
+    .on('error', (err) => {
+      console.error('Error processing video:', err);
+      res.status(500).json({ error: 'Error processing video' });
+    })
+    .run();
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something went wrong!' });
+});
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
