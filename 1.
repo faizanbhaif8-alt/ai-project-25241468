@@ -1,0 +1,50 @@
+import os
+import json
+import requests
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+from dotenv import load_dotenv
+
+load_dotenv()
+
+class AIVideoGenerator:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = "https://api.openai.com/v1"
+
+    def generate_text(self, prompt):
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+        data = {
+            "model": "text-davinci-003",
+            "prompt": prompt,
+            "max_tokens": 150
+        }
+        response = requests.post(f"{self.base_url}/completions", headers=headers, json=data)
+        if response.status_code == 200:
+            return response.json()["choices"][0]["text"].strip()
+        else:
+            raise Exception(f"Failed to generate text: {response.text}")
+
+    def create_video(self, text, output_path):
+        video_clip = VideoFileClip("background.mp4")
+        text_clip = TextClip(text, fontsize=50, color='white', bg_color='black')
+        text_clip = text_clip.set_position('center').set_duration(video_clip.duration)
+        final_clip = CompositeVideoClip([video_clip, text_clip])
+        final_clip.write_videofile(output_path, fps=24)
+
+    def run(self, prompt, output_path="output.mp4"):
+        try:
+            text = self.generate_text(prompt)
+            self.create_video(text, output_path)
+            return {"status": "success", "message": f"Video created at {output_path}"}
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+
+if __name__ == "__main__":
+    api_key = os.getenv("OPENAI_API_KEY")
+    generator = AIVideoGenerator(api_key)
+    prompt = "Create a short summary about AI advancements."
+    result = generator.run(prompt)
+    print(result)
