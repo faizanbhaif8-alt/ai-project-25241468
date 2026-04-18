@@ -1,0 +1,32 @@
+import os
+import cv2
+import uuid
+from moviepy.editor import VideoFileClip, concatenate_videoclips
+
+def generate_video(job_id, input_videos):
+    try:
+        # Ensure the output directory exists
+        output_dir = "media/videos"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Load video clips
+        clips = [VideoFileClip(video) for video in input_videos]
+
+        # Concatenate video clips
+        final_clip = concatenate_videoclips(clips)
+
+        # Generate output file name
+        output_file = os.path.join(output_dir, f"output_{job_id}.mp4")
+
+        # Write the result to the output file
+        final_clip.write_videofile(output_file, codec="libx264")
+
+        # Close the clips to free up resources
+        for clip in clips:
+            clip.close()
+
+        return output_file
+
+    except Exception as e:
+        print(f"Error generating video: {e}")
+        return None
