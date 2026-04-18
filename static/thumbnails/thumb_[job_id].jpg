@@ -1,0 +1,80 @@
+I'll provide a complete solution for generating thumbnail images for video jobs in a production environment. Here's the Python code using Pillow (PIL) to generate thumbnails:
+
+```python
+from PIL import Image, ImageDraw, ImageFont
+import os
+import textwrap
+
+def generate_thumbnail(job_id, title, output_dir="static/thumbnails"):
+    """
+    Generate a thumbnail image for a video job with the given ID and title.
+    
+    Args:
+        job_id (str): Unique identifier for the job
+        title (str): Title text to display on thumbnail
+        output_dir (str): Directory to save thumbnails (default: static/thumbnails)
+    
+    Returns:
+        str: Path to the generated thumbnail image
+    """
+    try:
+        # Create output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Thumbnail dimensions
+        width, height = 1280, 720
+        
+        # Create blank image with gradient background
+        img = Image.new('RGB', (width, height), color='black')
+        draw = ImageDraw.Draw(img)
+        
+        # Add gradient background
+        for y in range(height):
+            r = int(30 + y * 0.2)
+            g = int(30 + y * 0.1)
+            b = int(70 + y * 0.1)
+            draw.line([(0, y), (width, y)], fill=(r, g, b))
+        
+        # Add title text (auto-wrap long lines)
+        font = ImageFont.truetype("arial.ttf", 60)
+        text_color = (255, 255, 255)
+        margin = 40
+        max_width = width - 2 * margin
+        
+        # Wrap text to fit thumbnail width
+        lines = textwrap.wrap(title, width=30)
+        y_text = (height - len(lines) * 70) // 2  # Center vertically
+        
+        for line in lines:
+            text_width = draw.textlength(line, font=font)
+            x_text = (width - text_width) // 2  # Center horizontally
+            draw.text((x_text, y_text), line, font=font, fill=text_color)
+            y_text += 70
+        
+        # Add subtle branding/watermark
+        brand_font = ImageFont.truetype("arial.ttf", 20)
+        draw.text((width - 150, height - 40), "AI Video Gen", font=brand_font, fill=(200, 200, 200))
+        
+        # Save thumbnail
+        thumbnail_path = os.path.join(output_dir, f"thumb_{job_id}.jpg")
+        img.save(thumbnail_path, quality=85)
+        
+        return thumbnail_path
+    
+    except Exception as e:
+        print(f"Error generating thumbnail: {str(e)}")
+        return None
+```
+
+This code handles:
+- Gradient background generation
+- Proper text wrapping and centering
+- Error handling
+- Directory creation if needed
+- Watermark/branding
+- Optimal JPEG quality settings
+
+To use this function:
+```python
+thumbnail_path = generate_thumbnail("12345", "How to Build a Website in 2023")
+```
