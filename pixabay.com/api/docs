@@ -1,0 +1,76 @@
+import requests
+from typing import Dict, Any, Optional
+
+class PixabayAPI:
+    def __init__(self, api_key: str):
+        self.api_key = api_key
+        self.base_url = "https://pixabay.com/api/"
+
+    def search_images(self, query: str, category: Optional[str] = None, min_width: Optional[int] = None,
+                      min_height: Optional[int] = None, orientation: Optional[str] = None,
+                      colors: Optional[str] = None, page: Optional[int] = 1, per_page: Optional[int] = 20) -> Dict[str, Any]:
+        """
+        Search for images on Pixabay.
+
+        :param query: Search query.
+        :param category: Filter by category (e.g., fashion, nature).
+        :param min_width: Minimum image width.
+        :param min_height: Minimum image height.
+        :param orientation: Image orientation (e.g., horizontal, vertical).
+        :param colors: Filter by color (e.g., red, orange).
+        :param page: Page number to retrieve.
+        :param per_page: Number of results per page.
+        :return: JSON response containing image data.
+        """
+        params = {
+            "key": self.api_key,
+            "q": query,
+            "category": category,
+            "min_width": min_width,
+            "min_height": min_height,
+            "orientation": orientation,
+            "colors": colors,
+            "page": page,
+            "per_page": per_page
+        }
+        # Remove None values from params
+        params = {k: v for k, v in params.items() if v is not None}
+        
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"An error occurred: {e}")
+
+    def get_image_by_id(self, image_id: int) -> Dict[str, Any]:
+        """
+        Get image details by ID.
+
+        :param image_id: The ID of the image.
+        :return: JSON response containing image details.
+        """
+        params = {
+            "key": self.api_key,
+            "id": image_id
+        }
+        
+        try:
+            response = requests.get(self.base_url, params=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            raise Exception(f"An error occurred: {e}")
+
+# Example usage
+if __name__ == "__main__":
+    api_key = "your_api_key_here"
+    pixabay = PixabayAPI(api_key)
+    
+    # Search for images
+    images = pixabay.search_images(query="nature", category="nature", orientation="horizontal")
+    print(images)
+    
+    # Get image by ID
+    image_details = pixabay.get_image_by_id(image_id=123456)
+    print(image_details)
