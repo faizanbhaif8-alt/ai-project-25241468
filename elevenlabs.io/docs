@@ -1,0 +1,514 @@
+Here's the complete production-ready code for the ElevenLabs documentation page:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElevenLabs API Documentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+    <style>
+        :root {
+            --primary: #6e48aa;
+            --secondary: #9d50bb;
+            --text: #333;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --border: #dee2e6;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            background-color: var(--light);
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .sidebar {
+            width: 280px;
+            padding: 20px;
+            background-color: white;
+            border-right: 1px solid var(--border);
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: white;
+        }
+        
+        .logo {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .logo img {
+            height: 40px;
+        }
+        
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .nav-item {
+            margin-bottom: 10px;
+        }
+        
+        .nav-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(110, 72, 170, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(110, 72, 170, 0.2);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+        }
+        
+        h1 {
+            margin-top: 0;
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            margin-top: 40px;
+            font-size: 1.8rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        h3 {
+            margin-top: 30px;
+            font-size: 1.4rem;
+        }
+        
+        code {
+            background-color: rgba(110, 72, 170, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        
+        pre {
+            background-color: #f6f8fa;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        
+        .endpoint {
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .method {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+        
+        .get {
+            background-color: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        .post {
+            background-color: #f6ffed;
+            color: #52c41a;
+        }
+        
+        .put {
+            background-color: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .delete {
+            background-color: #fff1f0;
+            color: #f5222d;
+        }
+        
+        .path {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 0;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+            background-color: #f8f9fa;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-color: var(--border);
+            border-bottom-color: white;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            background-color: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        .param-table th, .param-table td {
+            border: 1px solid var(--border);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .param-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        
+        .param-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .response-example {
+            margin-top: 20px;
+        }
+        
+        .copy-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background-color: var(--secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="https://elevenlabs.io/static/elevenlabs_logo.svg" alt="ElevenLabs Logo">
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="#getting-started" class="nav-link active">Getting Started</a></li>
+                <li class="nav-item"><a href="#authentication" class="nav-link">Authentication</a></li>
+                <li class="nav-item"><a href="#voices" class="nav-link">Voices</a></li>
+                <li class="nav-item"><a href="#text-to-speech" class="nav-link">Text-to-Speech</a></li>
+                <li class="nav-item"><a href="#voice-generation" class="nav-link">Voice Generation</a></li>
+                <li class="nav-item"><a href="#projects" class="nav-link">Projects</a></li>
+                <li class="nav-item"><a href="#history" class="nav-link">History</a></li>
+                <li class="nav-item"><a href="#error-handling" class="nav-link">Error Handling</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <h1>ElevenLabs API Documentation</h1>
+            
+            <section id="getting-started">
+                <h2>Getting Started</h2>
+                <p>Welcome to the ElevenLabs API documentation. This guide will help you integrate our text-to-speech technology into your applications.</p>
+                
+                <h3>Base URL</h3>
+                <p>All API requests should be made to:</p>
+                <pre><code>https://api.elevenlabs.io/v1</code></pre>
+                
+                <h3>Requirements</h3>
+                <ul>
+                    <li>API key (available from your ElevenLabs account dashboard)</li>
+                    <li>HTTP client (like cURL, Axios, or similar)</li>
+                    <li>Internet connection</li>
+                </ul>
+            </section>
+            
+            <section id="authentication">
+                <h2>Authentication</h2>
+                <p>All API requests require authentication using your API key.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/user</span>
+                    </div>
+                    <p>Get information about your user account.</p>
+                    
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'curl-auth')">cURL</div>
+                            <div class="tab" onclick="openTab(event, 'python-auth')">Python</div>
+                            <div class="tab" onclick="openTab(event, 'js-auth')">JavaScript</div>
+                        </div>
+                        
+                        <div id="curl-auth" class="tab-content active">
+                            <pre><code class="language-bash">curl -X GET "https://api.elevenlabs.io/v1/user" \
+-H "xi-api-key: YOUR_API_KEY"</code></pre>
+                        </div>
+                        
+                        <div id="python-auth" class="tab-content">
+                            <pre><code class="language-python">import requests
+
+url = "https://api.elevenlabs.io/v1/user"
+headers = {
+    "xi-api-key": "YOUR_API_KEY"
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())</code></pre>
+                        </div>
+                        
+                        <div id="js-auth" class="tab-content">
+                            <pre><code class="language-javascript">fetch("https://api.elevenlabs.io/v1/user", {
+    method: "GET",
+    headers: {
+        "xi-api-key": "YOUR_API_KEY"
+    }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h3>Response</h3>
+                    <div class="response-example">
+                        <pre><code class="language-json">{
+    "subscription": {
+        "tier": "starter",
+        "character_count": 10000,
+        "character_limit": 10000,
+        "can_extend_character_limit": false,
+        "next_character_count_reset_unix": 1672531200
+    },
+    "is_new_user": false,
+    "xi_api_key": "your_api_key"
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="voices">
+                <h2>Voices</h2>
+                <p>Manage and retrieve voice information.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="path">/voices</span>
+                    </div>
+                    <p>Get a list of all available voices for your user.</p>
+                    
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'curl-voices')">cURL</div>
+                            <div class="tab" onclick="openTab(event, 'python-voices')">Python</div>
+                            <div class="tab" onclick="openTab(event, 'js-voices')">JavaScript</div>
+                        </div>
+                        
+                        <div id="curl-voices" class="tab-content active">
+                            <pre><code class="language-bash">curl -X GET "https://api.elevenlabs.io/v1/voices" \
+-H "xi-api-key: YOUR_API_KEY"</code></pre>
+                        </div>
+                        
+                        <div id="python-voices" class="tab-content">
+                            <pre><code class="language-python">import requests
+
+url = "https://api.elevenlabs.io/v1/voices"
+headers = {
+    "xi-api-key": "YOUR_API_KEY"
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())</code></pre>
+                        </div>
+                        
+                        <div id="js-voices" class="tab-content">
+                            <pre><code class="language-javascript">fetch("https://api.elevenlabs.io/v1/voices", {
+    method: "GET",
+    headers: {
+        "xi-api-key": "YOUR_API_KEY"
+    }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error("Error:", error));</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h3>Response</h3>
+                    <div class="response-example">
+                        <pre><code class="language-json">{
+    "voices": [
+        {
+            "voice_id": "21m00Tcm4TlvDq8ikWAM",
+            "name": "Rachel",
+            "category": "premade",
+            "description": "Soft-spoken female voice",
+            "preview_url": "https://storage.googleapis.com/eleven-public-prod/premade/voices/21m00Tcm4TlvDq8ikWAM/6ed16e81-27d6-4e3e-a1b3-4e0a3189ec6a.mp3"
+        },
+        {
+            "voice_id": "AZnzlk1XvdvUeBnXmlld",
+            "name": "Domi",
+            "category": "premade",
+            "description": "Strong female voice",
+            "preview_url": "https://storage.googleapis.com/eleven-public-prod/premade/voices/AZnzlk1XvdvUeBnXmlld/6ed16e81-27d6-4e3e-a1b3-4e0a3189ec6a.mp3"
+        }
+    ]
+}</code></pre>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="text-to-speech">
+                <h2>Text-to-Speech</h2>
+                <p>Convert text into natural sounding speech.</p>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="path">/text-to-speech/{voice_id}</span>
+                    </div>
+                    <p>Convert text to speech with the specified voice.</p>
+                    
+                    <h3>Parameters</h3>
+                    <table class="param-table">
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>voice_id</td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>ID of the voice to use</td>
+                        </tr>
+                        <tr>
+                            <td>text</td>
+                            <td>string</td>
+                            <td>Yes</td>
+                            <td>Text to convert to speech</td>
+                        </tr>
+                        <tr>
+                            <td>voice_settings</td>
+                            <td>object</td>
+                            <td>No</td>
+                            <td>Optional voice settings</td>
+                        </tr>
+                    </table>
+                    
+                    <div class="tab-container">
+                        <div class="tabs">
+                            <div class="tab active" onclick="openTab(event, 'curl-tts')">cURL</div>
+                            <div class="tab" onclick="openTab(event, 'python-tts')">Python</div>
+                            <div class="tab" onclick="openTab(event, 'js-tts')">JavaScript</div>
+                        </div>
+                        
+                        <div id="curl-tts" class="tab-content active">
+                            <pre><code class="language-bash">curl -X POST "https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM" \
+-H "xi-api-key: YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "text": "Hello world! This is a sample text to speech conversion.",
+    "voice_settings": {
+        "stability": 0.5,
+        "similarity_boost": 0.5
+    }
+}'</code></pre>
+                        </div>
+                        
+                        <div id="python-tts" class="tab-content">
+                            <pre><code class="language-python">import requests
+
+url = "https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM"
+headers = {
+    "xi-api
