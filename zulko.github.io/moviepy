@@ -1,0 +1,30 @@
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+from moviepy.video.fx.all import resize
+
+def generate_video(input_path, output_path, text):
+    try:
+        # Load video clip
+        video_clip = VideoFileClip(input_path)
+        
+        # Resize video to 480p
+        video_clip = resize(video_clip, width=480)
+        
+        # Create text clip
+        text_clip = TextClip(text, fontsize=24, color='white', font='Arial')
+        text_clip = text_clip.set_position('bottom').set_duration(video_clip.duration)
+        
+        # Combine video and text clips
+        final_clip = CompositeVideoClip([video_clip, text_clip])
+        
+        # Write the result to a file
+        final_clip.write_videofile(output_path, codec='libx264')
+        
+        # Close the clips
+        video_clip.close()
+        final_clip.close()
+        
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+# Example usage
+generate_video('input.mp4', 'output.mp4', 'This is a sample text overlay')
