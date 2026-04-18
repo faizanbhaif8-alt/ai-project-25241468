@@ -1,0 +1,23 @@
+import os
+import shutil
+import logging
+
+def remove_directory(path):
+    """
+    Remove a directory and all its contents recursively.
+    
+    Args:
+        path (str): The path of the directory to remove.
+    
+    Raises:
+        OSError: If the directory cannot be removed.
+    """
+    try:
+        if os.path.exists(path):
+            shutil.rmtree(path)
+            logging.info(f"Successfully removed directory: {path}")
+        else:
+            logging.warning(f"Directory does not exist: {path}")
+    except Exception as e:
+        logging.error(f"Error removing directory {path}: {e}")
+        raise
