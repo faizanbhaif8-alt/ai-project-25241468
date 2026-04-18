@@ -1,0 +1,13 @@
+import os
+
+def check_path_exists(path):
+    """
+    Check if a file or directory exists at the given path.
+
+    Args:
+        path (str): The path to check.
+
+    Returns:
+        bool: True if the path exists, False otherwise.
+    """
+    return os.path.exists(path)
